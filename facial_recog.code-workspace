@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"terminal.integrated.profiles.windows": {
+			"ThumaShell": {
+				"color": "terminal.ansiBlue",
+				"source": "PowerShell",
+				"args": [
+					"-noexit",
+					"function prompt  {  $ESC = [char]27; \"PS $ESC[48;2;194;108;21m$($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1))$ESC[0m\"  };",
+					// "function Prompt { $promptString = \"PS \" + $(Get-Location) + \">\"; Write-Host $promptString -NoNewline -ForegroundColor Yellow; return \" \"}",
+					"./venv/Scripts/Activate.ps1"
+				]
+			}
+		},
+		"terminal.integrated.defaultProfile.windows": "ThumaShell"
+	}
+}
