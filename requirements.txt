@@ -1,0 +1,5 @@
+cmake
+face_recognition
+numpy 
+opencv-python
+mediapipe-rpi4
