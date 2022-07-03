@@ -55,13 +55,13 @@ def normPic(img, x, y):
 
 
 cur_direc = os.getcwd()
-people_dir = 'data\\people\\'
+people_dir = 'data/people/'
 
 
 path = os.path.normpath(os.path.join(cur_direc, people_dir, "drew"))
 
 
-IMAGE_FILES = [f for f in glob.glob(path+'/*.png')]
+IMAGE_FILES = [f for f in glob.glob(path+'/*.jpg')]
 
 
 with mp_face_detection.FaceDetection(
@@ -92,4 +92,4 @@ with mp_face_detection.FaceDetection(
 
         normedImg = normPic(annotated_image, midpointX, midpointY)
         cv2.imwrite(os.path.join(path, 'processed/annotated_image' +
-                    str(idx) + '.png'), normedImg)
+                    str(idx) + '.jpg'), normedImg)

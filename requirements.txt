@@ -3,3 +3,5 @@ face_recognition
 numpy 
 opencv-python
 mediapipe-rpi4
+gpiozero
+picamera

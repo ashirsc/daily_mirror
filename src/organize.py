@@ -8,13 +8,15 @@ faces_encodings = []
 faces_names = []
 
 cur_direc = os.getcwd()
-train_dir = 'data\\faces\\'
-people_dir = 'data\\people\\'
-capture_dir = 'data\\captures\\'
+train_dir = 'data/faces/'
+people_dir = 'data/people/'
+capture_dir = 'data/captures/'
 
 
 path = os.path.join(cur_direc, train_dir)
+print("reading files at {}".format(path))
 list_of_files = [f for f in glob.glob(path+'*.jpg')]
+print("Found {} files".format(len(list_of_files)))
 number_files = len(list_of_files)
 names = list_of_files.copy()
 
@@ -38,7 +40,9 @@ for i in range(number_files):
 
 
 capture_path = os.path.join(cur_direc, capture_dir)
-list_of_files = [f for f in glob.glob(capture_path+'*.png')]
+print("reading files at {}".format(capture_path))
+list_of_files = [f for f in glob.glob(capture_path+'*.jpg')]
+print("Found {} files".format(len(list_of_files)))
 number_files = len(list_of_files)
 
 
@@ -60,7 +64,8 @@ for i in range(number_files):
         face_names.append(name)
 
     for j in range(len(face_names)):
-        file_name = list_of_files[i].replace(capture_dir, os.path.join(people_dir + face_names[j]+ "\\" ))
+        file_name = list_of_files[i].replace(capture_dir, os.path.join(people_dir + face_names[j]+ "/" ))
+        currentImage = cv2.cvtColor(currentImage, cv2.COLOR_BGR2RGB)
         cv2.imwrite(file_name,currentImage)
 
     os.remove(list_of_files[i])
