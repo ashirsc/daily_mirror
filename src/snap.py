@@ -42,7 +42,7 @@ class Organizer:
             # Create array of known names
             names[i] = names[i].replace(cur_direc, "")
             names[i] = names[i].replace(train_dir, "")
-            names[i] = names[i].replace("\\", "")
+            names[i] = names[i].replace("/", "")
             names[i] = os.path.splitext(names[i])[0]
             self.faces_names.append(names[i])
             print("Organizer initialized.")
@@ -182,6 +182,9 @@ class Snapper:
 
         name = self.organizer.matchFace(image)
         print("Found: {}".format(name))
+
+        # is there a dir for the name in the capture dir
+        
 
         fileName = 'data/captures/{}/{}.jpg'.format(
             name,

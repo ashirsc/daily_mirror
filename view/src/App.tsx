@@ -13,9 +13,9 @@ function App() {
 
   useEffect(() => {
     setIsLoading(false)
-    fetch("http://127.0.0.1:8000/all").then(async raw => {
+    fetch("/api/all").then(async raw => {
       const res = await raw.json()
-      const pics = res.files.map((file:string) => { return {src:"http://127.0.0.1:8000/images/" + file}})
+      const pics = res.files.map((file:string) => { return {src:"/api/images/" + file}})
       setPhotos(pics)
 
     })

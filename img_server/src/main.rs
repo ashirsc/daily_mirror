@@ -12,6 +12,9 @@ struct GetAllResponse {
     files: Vec<String>,
 }
 
+static CAPTURES_DIR:&'static str = "/home/drew/Documents/daily_mirror/data/captures";
+// let captures_dir = "C:\\Users\\andre\\workspace\\daily_mirror\\data\\captures"
+
 pub struct CORS;
 
 #[rocket::async_trait]
@@ -34,8 +37,8 @@ impl Fairing for CORS {
 
 #[get("/all")]
 fn root() -> String {
-//    "/home/drew/Documents/daily_mirror/data/captures"
-    let paths = fs::read_dir("C:\\Users\\andre\\workspace\\daily_mirror\\data\\captures")
+//    
+    let paths = fs::read_dir(CAPTURES_DIR)
         .unwrap()
         .map(|res| res.unwrap().path().file_name().unwrap().to_str().unwrap().to_string())
         .collect();
@@ -48,7 +51,8 @@ fn root() -> String {
 fn rocket() -> _ {
     rocket::build()
     .attach(CORS)
-    .mount("/images", FileServer::from("C:\\Users\\andre\\workspace\\daily_mirror\\data\\captures"))
-    .mount("/", routes![root])
+    .mount("/", FileServer::from("dist").rank(2))
+    .mount("/api/images", FileServer::from(CAPTURES_DIR).rank(1))
+    .mount("/api", routes![root])
 
 }
