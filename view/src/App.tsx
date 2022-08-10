@@ -3,7 +3,6 @@ import './App.css'
 import { useEffect, useState } from 'react'
 
 import Gallery from 'react-photo-gallery'
-import logo from './logo.svg'
 
 function App() {
   const [count, setCount] = useState(0)
