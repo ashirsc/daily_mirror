@@ -1,0 +1,11 @@
+[package]
+name = "snapr"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.61"
+opencv = "0.66.0"
+rppal = "0.13.1"
