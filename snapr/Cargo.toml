@@ -8,4 +8,9 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.61"
 opencv = "0.66.0"
-rppal = "0.13.1"
+# rppal = "0.13.1"
+dlib-face-recognition = {version = "0.2.2", features = ["embed-all"]}
+# dlib-face-recognition-cv = "0.1.0"
+image = "0.23"
+cpp = "0.5.7"
+
