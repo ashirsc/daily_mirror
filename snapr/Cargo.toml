@@ -13,4 +13,6 @@ dlib-face-recognition = {version = "0.2.2", features = ["embed-all"]}
 # dlib-face-recognition-cv = "0.1.0"
 image = "0.23"
 cpp = "0.5.7"
+tensorflow = "0.18.0"
+rustface = "0.1.7"
 
