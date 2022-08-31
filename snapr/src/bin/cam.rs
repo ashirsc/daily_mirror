@@ -1,17 +1,35 @@
-use anyhow::Result; // Automatically handle the error types
-                    // use dlib_face_recognition::*;
-                    // use dlib_face_recognition_cv::matrix_to_opencv_mat;
+use anyhow::Result; 
 use opencv::{
-    core::{self, Point, Rect, Scalar, Size, ToInputOutputArray, ToOutputArray, Vector},
-    highgui, imgcodecs, imgproc,
-    objdetect,
+    core::{Point, Scalar, ToInputOutputArray},
+    imgcodecs, imgproc,highgui,
     prelude::*,
-    types, videoio,
+    videoio,
 };
+use rppal::gpio::{Gpio, InputPin, OutputPin};
+use std::sync::mpsc::channel;
+use std::thread;
+use std::time::{Duration, SystemTime};
 
-use std::time::SystemTime;
+fn blink(led_pin: &u8, num_intervals: i32, interval_duration: Duration) {
+    let gpio = Gpio::new().expect("Failed to initialize GPIO");
+    let mut led: OutputPin = gpio
+        .get(*led_pin)
+        .expect("Failed to get pin {}")
+        .into_output();
 
-fn draw_fps<'a>(frame: &mut Mat, prev_time: &SystemTime) -> SystemTime {
+    led.set_low();
+    for _ in 0..num_intervals - 1 {
+        led.set_high();
+        thread::sleep(interval_duration);
+        led.set_low();
+        thread::sleep(interval_duration);
+    }
+    led.set_high();
+    thread::sleep(interval_duration);
+    led.set_low();
+}
+
+fn draw_fps(frame: &mut Mat, prev_time: &SystemTime) -> SystemTime {
     let new_frame_time = SystemTime::now();
 
     let fps = 1.0
@@ -35,17 +53,19 @@ fn draw_fps<'a>(frame: &mut Mat, prev_time: &SystemTime) -> SystemTime {
     new_frame_time
 }
 
-fn main() -> Result<()> {
-    // Note, this is anyhow::Result
-    // Open a GUI window
-    highgui::named_window("window", highgui::WINDOW_FULLSCREEN)?;
-    // Open the web-camera (assuming you have one)
-    let mut cam = videoio::VideoCapture::new(0, videoio::CAP_ANY)?;
+#[tokio::main]
+async fn main() -> Result<()> {
+    highgui::named_window("Preview", highgui::WINDOW_FULLSCREEN)?;
+
+    let mut cam = videoio::VideoCapture::new(2, videoio::CAP_ANY)?;
     let mut frame = Mat::default();
 
-    let mut prev_frame_time = SystemTime::now();
+    let gpio = Gpio::new().expect("Failed to initialize GPIO");
+    let red_led_pin = 17;
+    let button: InputPin = gpio.get(2).expect("Failed to get pin 2").into_input();
 
-    let mut face_cascade = objdetect::CascadeClassifier::new("haarcascade_frontalface_alt.xml").unwrap();
+    let (sender, receiver) = channel();
+
 
     loop {
         cam.read(&mut frame)?;
@@ -53,49 +73,33 @@ fn main() -> Result<()> {
             continue;
         }
 
-        let mut gray = Mat::default();
-        imgproc::cvt_color(
-            &frame,
-            &mut gray.output_array().unwrap(),
-            imgproc::COLOR_BGR2GRAY,
-            0,
-        )
-        .unwrap();
-        let mut faces = Vector::<Rect>::new();
-        let _ = face_cascade.detect_multi_scale(
-            &gray,
-            &mut faces,
-            2.0,
-            4,
-            0,
-            Size::new(240, 240),
-            Size::new(3680, 3680),
-        )?;
-        for face in faces.iter() {
-            let _ = imgproc::rectangle(
-                &mut frame.input_output_array().unwrap(),
-                face,
-                Scalar::new(0.0, 255.0, 0.0, 0.0),
-                3,
-                imgproc::LINE_AA,
-                0,
-            );
+        // let mut gray = Mat::default();
+        // imgproc::cvt_color(
+        //     &frame,
+        //     &mut gray.output_array().unwrap(),
+        //     imgproc::COLOR_BGR2GRAY,
+        //     0,
+        // )
+        // .unwrap();
+
+        if button.is_low() {
+            let sender = sender.clone();
+            thread::spawn(move || {
+                blink(&red_led_pin, 3, Duration::from_millis(500));
+                println!("Finished blinking");
+                sender.send(()).unwrap();
+            });
         }
+        highgui::imshow("window", &frame)?;
 
-        prev_frame_time = draw_fps(&mut frame, &prev_frame_time);
-
-        highgui::imshow("window", &gray)?;
-        let key = highgui::wait_key(1)?;
-        if key == 32 {
-            //save image with space
+        if receiver.try_recv() == Ok(()) {
             imgcodecs::imwrite(
-                "../data/output/image.png",
+                "images/capture.jpg",
                 &frame,
                 &opencv::types::VectorOfi32::new(),
-            )?;
-        } else if key == 27 {
-            break;
+            )
+            .unwrap();
         }
     }
-    Ok(())
+    // Ok(())
 }
