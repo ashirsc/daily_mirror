@@ -1,4 +1,12 @@
-[target.armv7-unknown-linux-gnueabihf]
-linker = "arm-linux-gnueabihf-ld"
-[target.armv7-unknown-linux-musleabihf]
-linker = "arm-linux-gnueabihf-ld"
+#[target.armv7-unknown-linux-gnueabihf]
+#linker = "arm-linux-gnueabihf-ld"
+#[target.armv7-unknown-linux-musleabihf]
+#linker = "arm-linux-gnueabihf-ld"
+
+# [env]
+# OPENCV_LINK_PATHS="/usr/local/lib/arm-linux-gnueabihf"
+# OPENCV_INCLUDE_PATHS="/usr/local/include/opencv4/opencv2"
+# OPENCV_LINK_LIBS="/usr/local/lib/arm-linux-gnueabihf"
+# LIBCLANG_PATH="/usr/lib/llvm-11/lib"
+# PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
+# LD_LIBRARY_PATH="/usr/local/lib"
